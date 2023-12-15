@@ -1,24 +1,28 @@
 package ch.martinelli.demo.hibernate;
 
 import ch.martinelli.demo.hibernate.domain.Employee;
+import ch.martinelli.demo.hibernate.domain.EmployeeDao_;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
+import org.assertj.core.api.AssertionInfo;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.stream.Stream;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @Import(TestHibernateQueryFinderApplication.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class HibernateQueryFinderApplicationTests {
+class HibernateQueryFinderApplicationTest {
 
     @Autowired
     private EntityManager em;
@@ -39,6 +43,21 @@ class HibernateQueryFinderApplicationTests {
                 .getResultStream();
 
         stream.forEach(System.out::println);
+    }
+
+    @Test
+    void findByFirstName() {
+        List<Employee> employees = EmployeeDao_.findAllByFirstName(em, "Peter");
+
+        assertThat(employees).hasSize(1);
+        assertThat(employees.get(0).getFirstName()).isEqualTo("Peter");
+    }
+
+    @Test
+    void findAll() {
+        List<Employee> employees = EmployeeDao_.findAll(em);
+
+        assertThat(employees).hasSize(1);
     }
 
 }

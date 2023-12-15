@@ -1,7 +1,9 @@
 package ch.martinelli.demo.hibernate.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.processing.CheckHQL;
 
+@CheckHQL
 @Entity
 public class Employee {
 
